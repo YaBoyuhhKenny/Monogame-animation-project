@@ -43,6 +43,12 @@
 /processorParam:TextureFormat=Color
 /build:F-4e.png
 
+#begin Magic Spear I.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Magic Spear I.mp3
+
 #begin missile.png
 /importer:TextureImporter
 /processor:TextureProcessor
