@@ -11,19 +11,38 @@ namespace Monogame_animation_project
         private SpriteBatch _spriteBatch;
 
         Texture2D jetTexture;
+        Rectangle jetRectangle;
+        Vector2 jetSpeed;
+
         Texture2D skyTexture;
+        Rectangle skyRectangle;
+        Vector2 skySpeed;
         Texture2D skyTexture2;
+        Rectangle skyRectangle2;
+        Vector2 skySpeed2;
+
         Texture2D missileTexture;
+        Rectangle missileRectangle;
+        Vector2 missileSpeed;
+
+        Texture2D targetTexture;
+
         Texture2D explosion;
         SoundEffect explode;
         SoundEffectInstance explodeInstance;
+
         SoundEffect music;
         SoundEffectInstance musicInstance;
+
         bool detonated;
+
         float seconds;
         float startTime;
+
         MouseState mouseState;
+
         SpriteFont startFont;
+
         Screen currentScreen;
 
         enum Screen
@@ -44,6 +63,18 @@ namespace Monogame_animation_project
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            _graphics.PreferredBackBufferWidth = 800;
+            _graphics.PreferredBackBufferHeight = 500;
+            _graphics.ApplyChanges();
+
+            skyRectangle = new Rectangle(0, 0, 800, 500);
+            skySpeed = new Vector2(-50, 0);
+
+            skyRectangle2 = new Rectangle(800, 0, 800, 500);
+            skySpeed2 = new Vector2(-50, 0);
+
+            jetRectangle = new Rectangle(0, 0, 574, 252);
+            jetSpeed = new Vector2(35, 0);
 
             base.Initialize();
         }
@@ -56,9 +87,10 @@ namespace Monogame_animation_project
 
             jetTexture = Content.Load<Texture2D>("F-4e");
             skyTexture = Content.Load<Texture2D>("sky");
+            skyTexture2 = Content.Load<Texture2D>("sky");
             missileTexture = Content.Load<Texture2D>("missile");
-            explode = Content.Load<SoundEffect>("explosion.wav");
-            explosion = Content.Load<Texture2D>("explosion.jpg");
+            explode = Content.Load<SoundEffect>("explode");
+            explosion = Content.Load<Texture2D>("explosion");
             explodeInstance = explode.CreateInstance();
             music = Content.Load<SoundEffect>("Magic Spear I");
             musicInstance = music.CreateInstance();
@@ -77,11 +109,24 @@ namespace Monogame_animation_project
             }
             else if (currentScreen == Screen.Flight)
             {
+                
 
+                skyRectangle.X += (int)skySpeed.X;
+                skyRectangle2.X += (int)skySpeed2.X;
+                if (skyRectangle.Right == 800)
+                {
+                    skyRectangle2 = new Rectangle(800, 0, 800, 500);
+                }
+                if (skyRectangle2.Right == 800)
+                {
+                    skyRectangle = new Rectangle(800, 0, 800, 500);
+                }
+
+                
             }
             else if (currentScreen == Screen.Target)
             {
-
+                jetRectangle.X += (int)jetSpeed.X;
             }
             else if (currentScreen == Screen.End)
             {
@@ -110,17 +155,18 @@ namespace Monogame_animation_project
             if (currentScreen == Screen.Intro)
             {
                 _spriteBatch.Draw(skyTexture, new Rectangle(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight), Color.White);
-                _spriteBatch.DrawString(startFont, "Bunker Buster", new Vector2(10, 30), Color.Gold);
+                _spriteBatch.DrawString(startFont, "Bunker Buster", new Vector2(200, 160), Color.Gold);
                 if (mouseState.LeftButton == ButtonState.Pressed)
                     currentScreen = Screen.Flight;
             }
             else if (currentScreen == Screen.Flight)
             {
-                
+                _spriteBatch.Draw(jetTexture, jetRectangle, Color.White);
 
             }
             else if (currentScreen == Screen.Target)
             {
+
 
             }
             else if (currentScreen == Screen.End)
