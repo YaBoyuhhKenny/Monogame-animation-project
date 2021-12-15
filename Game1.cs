@@ -21,9 +21,9 @@ namespace Monogame_animation_project
         Rectangle skyRectangle2;
         Vector2 skySpeed2;
 
-        Texture2D missileTexture;
-        Rectangle missileRectangle;
-        Vector2 missileSpeed;
+        Texture2D bombTexture;
+        Rectangle bombRectangle;
+        Vector2 bombSpeed;
 
         Texture2D targetTexture;
 
@@ -35,9 +35,9 @@ namespace Monogame_animation_project
         SoundEffectInstance musicInstance;
 
 
-
+        bool detonated = false;
         
-        float startTime;
+
 
         MouseState mouseState;
 
@@ -73,10 +73,11 @@ namespace Monogame_animation_project
             skyRectangle2 = new Rectangle(800, 0, 800, 500);
             skySpeed2 = new Vector2(-40, 0);
 
-            jetRectangle = new Rectangle(0, 0, 574, 252);
+            jetRectangle = new Rectangle(0, -50, 574, 252);
             jetSpeed = new Vector2(35, 0);
 
-           
+            bombRectangle = new Rectangle(357, 0, 182, 38);
+            bombSpeed = new Vector2(0, 5);
 
             base.Initialize();
         }
@@ -90,8 +91,9 @@ namespace Monogame_animation_project
             jetTexture = Content.Load<Texture2D>("F-4e");
             skyTexture = Content.Load<Texture2D>("sky");
             skyTexture2 = Content.Load<Texture2D>("sky");
-            missileTexture = Content.Load<Texture2D>("missile");
+            bombTexture = Content.Load<Texture2D>("ground_bomb");
             explode = Content.Load<SoundEffect>("explode");
+            targetTexture = Content.Load<Texture2D>("bunker");
             explosion = Content.Load<Texture2D>("explosion");
             explodeInstance = explode.CreateInstance();
             music = Content.Load<SoundEffect>("Magic Spear I");
@@ -103,7 +105,7 @@ namespace Monogame_animation_project
         {
             mouseState = Mouse.GetState();
 
-            startTime = (float)gameTime.TotalGameTime.TotalSeconds;
+
 
             if (currentScreen == Screen.Intro)
             {
@@ -113,7 +115,7 @@ namespace Monogame_animation_project
             }
             else if (currentScreen == Screen.Flight)
             {
-                startTime = (float)gameTime.TotalGameTime.TotalSeconds;
+
 
                 skyRectangle.X += (int)skySpeed.X;
                 skyRectangle2.X += (int)skySpeed2.X;
@@ -126,18 +128,28 @@ namespace Monogame_animation_project
                     skyRectangle = new Rectangle(800, 0, 800, 500);
                 }
 
-                if (startTime == 10)
+                if ((float)gameTime.TotalGameTime.TotalSeconds > 60)
                     currentScreen = Screen.Target;
-                
+
             }
             else if (currentScreen == Screen.Target)
             {
                 jetRectangle.X += (int)jetSpeed.X;
+                bombRectangle.Y += (int)bombSpeed.Y;
+                if (bombRectangle.Y > _graphics.PreferredBackBufferHeight)
+                {
+                    currentScreen = Screen.End;
+                    detonated = true;
+                }
             }
             else if (currentScreen == Screen.End)
             {
                 musicInstance.Stop();
-                explodeInstance.Play();
+                if (detonated == true)
+                {
+                    explodeInstance.Play();
+                    detonated = false;
+                }
                 if (explodeInstance.State == SoundState.Stopped)
                     Exit();
             }
@@ -162,8 +174,6 @@ namespace Monogame_animation_project
             {
                 _spriteBatch.Draw(skyTexture, new Rectangle(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight), Color.White);
                 _spriteBatch.DrawString(startFont, "Bunker Buster", new Vector2(200, 160), Color.Gold);
-                if (mouseState.LeftButton == ButtonState.Pressed)
-                    currentScreen = Screen.Flight;
             }
             else if (currentScreen == Screen.Flight)
             {
@@ -175,14 +185,13 @@ namespace Monogame_animation_project
             {
                 _spriteBatch.Draw(targetTexture, new Rectangle(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight), Color.White);
                 _spriteBatch.Draw(jetTexture, jetRectangle, Color.White);
+                if (jetRectangle.X > 70)
+                    _spriteBatch.Draw(bombTexture, bombRectangle, Color.White);
                 
             }
             else if (currentScreen == Screen.End)
             {
-                musicInstance.Stop();
-                explodeInstance.Play();
-                if (explodeInstance.State == SoundState.Stopped)
-                    Exit();
+                _spriteBatch.Draw(explosion, new Rectangle(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight), Color.White);
             }
 
 
