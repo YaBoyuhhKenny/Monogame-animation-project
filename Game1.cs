@@ -34,9 +34,9 @@ namespace Monogame_animation_project
         SoundEffect music;
         SoundEffectInstance musicInstance;
 
-        bool detonated;
 
-        float seconds;
+
+        
         float startTime;
 
         MouseState mouseState;
@@ -68,13 +68,15 @@ namespace Monogame_animation_project
             _graphics.ApplyChanges();
 
             skyRectangle = new Rectangle(0, 0, 800, 500);
-            skySpeed = new Vector2(-50, 0);
+            skySpeed = new Vector2(-40, 0);
 
             skyRectangle2 = new Rectangle(800, 0, 800, 500);
-            skySpeed2 = new Vector2(-50, 0);
+            skySpeed2 = new Vector2(-40, 0);
 
             jetRectangle = new Rectangle(0, 0, 574, 252);
             jetSpeed = new Vector2(35, 0);
+
+           
 
             base.Initialize();
         }
@@ -101,6 +103,8 @@ namespace Monogame_animation_project
         {
             mouseState = Mouse.GetState();
 
+            startTime = (float)gameTime.TotalGameTime.TotalSeconds;
+
             if (currentScreen == Screen.Intro)
             {
                 musicInstance.Play();
@@ -109,7 +113,7 @@ namespace Monogame_animation_project
             }
             else if (currentScreen == Screen.Flight)
             {
-                
+                startTime = (float)gameTime.TotalGameTime.TotalSeconds;
 
                 skyRectangle.X += (int)skySpeed.X;
                 skyRectangle2.X += (int)skySpeed2.X;
@@ -122,6 +126,8 @@ namespace Monogame_animation_project
                     skyRectangle = new Rectangle(800, 0, 800, 500);
                 }
 
+                if (startTime == 10)
+                    currentScreen = Screen.Target;
                 
             }
             else if (currentScreen == Screen.Target)
@@ -161,13 +167,15 @@ namespace Monogame_animation_project
             }
             else if (currentScreen == Screen.Flight)
             {
+                _spriteBatch.Draw(skyTexture, skyRectangle, Color.White);
+                _spriteBatch.Draw(skyTexture2, skyRectangle2, Color.White);
                 _spriteBatch.Draw(jetTexture, jetRectangle, Color.White);
-
             }
             else if (currentScreen == Screen.Target)
             {
-
-
+                _spriteBatch.Draw(targetTexture, new Rectangle(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight), Color.White);
+                _spriteBatch.Draw(jetTexture, jetRectangle, Color.White);
+                
             }
             else if (currentScreen == Screen.End)
             {
